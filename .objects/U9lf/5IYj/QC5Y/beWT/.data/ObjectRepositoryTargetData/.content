@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="rSmkwTOrOkiJC6XTJIrW5g" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" BrowserURL="testautomationpractice.blogspot.com" DesignTimeRectangle="752, 526, 232, 59" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl aaname='Online Trainings' tag='A' /&gt;" Guid="80dabfd7-bf44-46a5-8028-1a3479e6d9ec" ScopeSelectorArgument="&lt;html app='chrome.exe' title='Automation Testing Practice' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
+      <imageRef attrName="InformativeScreenshot" originalValue="8c18f8363895cda4856e5cb9358a7b6f.jpg" xmlns="">04ua-QrDv-0OksvdJs-e2pw</imageRef>
+    </TargetAnchorable>
+    <x:String x:Key="ActivityType">Click</x:String>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>

@@ -1,0 +1,12 @@
+﻿{
+  "Name": "Chrome Automation Testing Practice",
+  "Type": "App",
+  "Id": "U9lflI0DZ0Snz6Vskoe6Dg",
+  "Reference": "uNh5UF5S3UiA6MfDZPfAVg/U9lflI0DZ0Snz6Vskoe6Dg",
+  "Created": "2026-10-01T06:38:27.3294545Z",
+  "Updated": "2026-10-01T06:38:27.3294545Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.4.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.9.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

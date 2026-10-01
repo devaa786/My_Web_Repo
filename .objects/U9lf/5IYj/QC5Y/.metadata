@@ -1,0 +1,13 @@
+﻿{
+  "Name": "Chrome Automation Testing Practice",
+  "Type": "Screen",
+  "Id": "QC5YzWnpjUGG3Xn_OMzlvg",
+  "Reference": "uNh5UF5S3UiA6MfDZPfAVg/QC5YzWnpjUGG3Xn_OMzlvg",
+  "ParentRef": "uNh5UF5S3UiA6MfDZPfAVg/5IYjl9_7UE2yZfdzlD7LEw",
+  "Created": "2026-10-01T06:38:28.043323Z",
+  "Updated": "2026-10-01T06:38:28.043323Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.4.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.9.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

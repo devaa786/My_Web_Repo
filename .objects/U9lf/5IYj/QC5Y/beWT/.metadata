@@ -1,0 +1,14 @@
+﻿{
+  "Name": "Online Trainings",
+  "Type": "Element",
+  "TaxonomyType": "Label",
+  "Id": "beWTituhxU6KOnlsCagTNg",
+  "Reference": "uNh5UF5S3UiA6MfDZPfAVg/beWTituhxU6KOnlsCagTNg",
+  "ParentRef": "uNh5UF5S3UiA6MfDZPfAVg/QC5YzWnpjUGG3Xn_OMzlvg",
+  "Created": "2026-10-01T06:40:25.0854635Z",
+  "Updated": "2026-10-01T06:40:25.0854635Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.4.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.9.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}
