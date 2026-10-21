@@ -21,7 +21,6 @@ jobs:
       UIPATH_CLIENT_ID: ${{ secrets.UIPATH_CLIENT_ID }}
       UIPATH_CLIENT_SECRET: ${{ secrets.UIPATH_CLIENT_SECRET }}
       UIPATH_PROCESS_KEY: ${{ secrets.UIPATH_PROCESS_KEY }}
-      # ADDED: Mapping your folder key from GitHub Secrets
       UIPATH_FOLDER_KEY: ${{ secrets.UIPATH_FOLDER_KEY }}
 
     steps:
@@ -74,15 +73,14 @@ jobs:
       - name: Verify authentication
         run: uip login status --output table
 
-      # FIX: Explicitly passing the exact path and its corresponding Folder Key
+      # FIX: Removed the unsupported '--folder' flag and used the direct Organization Unit header 
       - name: Execute process and wait for completion
         shell: bash
         run: |
           echo "Starting UiPath Orchestrator process..."
 
           uip or jobs start "$UIPATH_PROCESS_KEY" \
-            --folder "Shared/Learning" \
-            --header "X-UIPATH-FolderKey=$UIPATH_FOLDER_KEY" \
+            --header "X-UIPATH-OrganizationUnitId=$UIPATH_FOLDER_KEY" \
             --wait-for-completion \
             --timeout 1800 \
             --poll-interval 10
