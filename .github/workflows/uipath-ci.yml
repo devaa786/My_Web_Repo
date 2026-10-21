@@ -12,10 +12,11 @@ on:
 jobs:
   validate:
     runs-on: windows-latest
-
+  env:
+      ACTIONS_ALLOW_USE_NODE20: true
     steps:
       - name: Checkout repository
-        uses: actions/checkout@eef6142db1ff2b24b75d6f873714104d3beac45c
+        uses: actions/checkout@v4
 
       - name: Check UiPath project files
         shell: pwsh
