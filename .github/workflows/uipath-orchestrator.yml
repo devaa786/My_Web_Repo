@@ -21,9 +21,10 @@ jobs:
       UIPATH_CLIENT_ID: ${{ secrets.UIPATH_CLIENT_ID }}
       UIPATH_CLIENT_SECRET: ${{ secrets.UIPATH_CLIENT_SECRET }}
       UIPATH_PROCESS_KEY: ${{ secrets.UIPATH_PROCESS_KEY }}
+      # ADDED: Mapping your folder key from GitHub Secrets
+      UIPATH_FOLDER_KEY: ${{ secrets.UIPATH_FOLDER_KEY }}
 
     steps:
-      # FIX: Restored to a stable, valid version tag to fix the resolution error
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
 
@@ -57,8 +58,11 @@ jobs:
             echo "UIPATH_PROCESS_KEY is missing"
             exit 1
           }
+          test -n "$UIPATH_FOLDER_KEY" || {
+            echo "UIPATH_FOLDER_KEY is missing"
+            exit 1
+          }
 
-      # FIX: Corrected argument evaluation to pass variables rather than literal text strings
       - name: Authenticate with UiPath Automation Cloud
         run: |
           uip login \
@@ -70,12 +74,15 @@ jobs:
       - name: Verify authentication
         run: uip login status --output table
 
+      # FIX: Explicitly passing the exact path and its corresponding Folder Key
       - name: Execute process and wait for completion
         shell: bash
         run: |
           echo "Starting UiPath Orchestrator process..."
 
           uip or jobs start "$UIPATH_PROCESS_KEY" \
+            --folder "Shared/Learning" \
+            --header "X-UIPATH-FolderKey=$UIPATH_FOLDER_KEY" \
             --wait-for-completion \
             --timeout 1800 \
             --poll-interval 10
