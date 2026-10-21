@@ -1,0 +1,82 @@
+
+name: Run UiPath Orchestrator Process
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: uipath-orchestrator-manual
+  cancel-in-progress: false
+
+jobs:
+  run-uipath-process:
+    name: Execute UiPath process
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    env:
+      UIPATH_TENANT: ${{ vars.UIPATH_TENANT }}
+      UIPATH_CLIENT_ID: ${{ secrets.UIPATH_CLIENT_ID }}
+      UIPATH_CLIENT_SECRET: ${{ secrets.UIPATH_CLIENT_SECRET }}
+      UIPATH_PROCESS_KEY: ${{ vars.UIPATH_PROCESS_KEY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install UiPath CLI
+        run: npm install -g @uipath/cli@1.0.0
+
+      - name: Install Orchestrator CLI tool
+        run: uip tools install @uipath/orchestrator-tool
+
+      - name: Validate configuration
+        shell: bash
+        run: |
+          test -n "$UIPATH_TENANT" || {
+            echo "UIPATH_TENANT is missing"
+            exit 1
+          }
+          test -n "$UIPATH_CLIENT_ID" || {
+            echo "UIPATH_CLIENT_ID is missing"
+            exit 1
+          }
+          test -n "$UIPATH_CLIENT_SECRET" || {
+            echo "UIPATH_CLIENT_SECRET is missing"
+            exit 1
+          }
+          test -n "$UIPATH_PROCESS_KEY" || {
+            echo "UIPATH_PROCESS_KEY is missing"
+            exit 1
+          }
+
+      - name: Authenticate with UiPath Automation Cloud
+        run: |
+          uip login \
+            --client-id env.UIPATH_CLIENT_ID \
+            --client-secret env.UIPATH_CLIENT_SECRET \
+            --tenant "$UIPATH_TENANT" \
+            --scope "OR.Folders OR.Execution OR.Jobs"
+
+      - name: Verify authentication
+        run: uip login status --output table
+
+      - name: Execute process and wait for completion
+        shell: bash
+        run: |
+          echo "Starting UiPath Orchestrator process..."
+
+          uip or jobs start "$UIPATH_PROCESS_KEY" \
+            --wait-for-completion \
+            --timeout 1800 \
+            --poll-interval 10
+
+          echo "UiPath process completed successfully."
