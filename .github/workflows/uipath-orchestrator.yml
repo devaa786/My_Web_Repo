@@ -20,7 +20,7 @@ jobs:
       UIPATH_TENANT: ${{ vars.UIPATH_TENANT }}
       UIPATH_CLIENT_ID: ${{ secrets.UIPATH_CLIENT_ID }}
       UIPATH_CLIENT_SECRET: ${{ secrets.UIPATH_CLIENT_SECRET }}
-      UIPATH_PROCESS_KEY: ${{ vars.UIPATH_PROCESS_KEY }}
+      UIPATH_PROCESS_KEY: ${{ secrets.UIPATH_PROCESS_KEY }}
 
     steps:
       # FIX: Restored to a stable, valid version tag to fix the resolution error
