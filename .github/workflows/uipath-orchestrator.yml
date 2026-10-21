@@ -73,14 +73,15 @@ jobs:
       - name: Verify authentication
         run: uip login status --output table
 
-      # FIX: Removed the unsupported '--folder' flag and used the direct Organization Unit header 
+      # FIX: Removed the unsupported '--header' flag and set context through the native environment variable block
       - name: Execute process and wait for completion
         shell: bash
+        env:
+          UIPATH_ORGANIZATION_UNIT_ID: ${{ secrets.UIPATH_FOLDER_KEY }}
         run: |
           echo "Starting UiPath Orchestrator process..."
 
           uip or jobs start "$UIPATH_PROCESS_KEY" \
-            --header "X-UIPATH-OrganizationUnitId=$UIPATH_FOLDER_KEY" \
             --wait-for-completion \
             --timeout 1800 \
             --poll-interval 10
