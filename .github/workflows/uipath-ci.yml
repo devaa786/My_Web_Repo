@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4.3.0
+        uses: actions/checkout@v4.4.0
 
       - name: Check UiPath project files
         shell: pwsh
