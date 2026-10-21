@@ -1,4 +1,3 @@
-
 name: Run UiPath Orchestrator Process
 
 on:
@@ -24,11 +23,12 @@ jobs:
       UIPATH_PROCESS_KEY: ${{ vars.UIPATH_PROCESS_KEY }}
 
     steps:
+      # FIX: Restored to a stable, valid version tag to fix the resolution error
       - name: Checkout repository
-        uses: actions/checkout@eef6142db1ff2b24b75d6f873714104d3beac45c
+        uses: actions/checkout@v4.2.2
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4.3.0
+        uses: actions/setup-node@v4
         with:
           node-version: "22"
 
@@ -58,11 +58,12 @@ jobs:
             exit 1
           }
 
+      # FIX: Corrected argument evaluation to pass variables rather than literal text strings
       - name: Authenticate with UiPath Automation Cloud
         run: |
           uip login \
-            --client-id env.UIPATH_CLIENT_ID \
-            --client-secret env.UIPATH_CLIENT_SECRET \
+            --client-id "$UIPATH_CLIENT_ID" \
+            --client-secret "$UIPATH_CLIENT_SECRET" \
             --tenant "$UIPATH_TENANT" \
             --scope "OR.Folders OR.Execution OR.Jobs"
 
