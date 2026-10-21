@@ -1,0 +1,50 @@
+name: UiPath CI-CD Run Workflow
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: # Allows you to manually trigger this run from the GitHub UI button
+
+jobs:
+  build-deploy-and-run:
+    runs-on: windows-latest
+
+    steps:
+    # 1. Pull code from repository
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # 2. Pack the project
+    - name: UiPath Pack Project
+      uses: UiPath/uipath-actions/pack@v2
+      with:
+        projectJsonPath: '${{ github.workspace }}/project.json'
+        outputPath: '${{ github.workspace }}\output'
+        outputType: 'Process'
+        versionSuffix: '-pre.${{ github.run_id }}'
+
+    # 3. Deploy the package to Orchestrator
+    - name: UiPath Deploy Package
+      uses: UiPath/uipath-actions/deploy@v2
+      with:
+        packagesPath: '${{ github.workspace }}\output'
+        orchestratorUrl: 'https://uipath.com'
+        accountName: '${{ secrets.UIPATH_ACCOUNT_NAME }}'
+        tenantName: '${{ secrets.UIPATH_TENANT_NAME }}'
+        folderName: 'Default' 
+        clientId: '${{ secrets.UIPATH_CLIENT_ID }}'
+        clientSecret: '${{ secrets.UIPATH_CLIENT_SECRET }}'
+
+    # 4. RUN THE PROCESS IN ORCHESTRATOR
+    - name: UiPath Run Job
+      uses: UiPath/uipath-actions/run-job@v2
+      with:
+        orchestratorUrl: 'https://uipath.com'
+        accountName: '${{ secrets.UIPATH_ACCOUNT_NAME }}'
+        tenantName: '${{ secrets.UIPATH_TENANT_NAME }}'
+        folderName: 'Default' # The name of the Orchestrator folder where your process runs
+        clientId: '${{ secrets.UIPATH_CLIENT_ID }}'
+        clientSecret: '${{ secrets.UIPATH_CLIENT_SECRET }}'
+        processReleaseKey: '${{ secrets.UIPATH_RELEASE_KEY }}' # Uses the key you fetched from Postman
+        strategy: 'ModernJobsCount' # Tells Orchestrator to allocate an available runtime asset automatically
+        jobsCount: 1
