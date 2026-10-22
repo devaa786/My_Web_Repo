@@ -1,0 +1,41 @@
+name: UiPath GitHub Actions
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+# MOVED TO THE GLOBAL ROOT LEVEL TO SILENCE THE RUNNER ARTIFACT COMPLETELY
+env:
+  ACTIONS_ALLOW_USE_NODE20: true
+
+jobs:
+  validate:
+    runs-on: windows-latest
+      
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check UiPath project files
+        shell: pwsh
+        run: |
+          $requiredFiles = @(
+            "Main.xaml",
+            "project.json",
+            "project.uiproj"
+          )
+
+          foreach ($file in $requiredFiles) {
+            if (!(Test-Path $file)) {
+              throw "Required file missing: $file"
+            }
+
+            Write-Host "Found: $file"
+          }
+
+          Write-Host "UiPath project file check passed."

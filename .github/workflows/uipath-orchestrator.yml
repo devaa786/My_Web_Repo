@@ -1,0 +1,86 @@
+name: Run UiPath Orchestrator Process
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: uipath-orchestrator-manual
+  cancel-in-progress: false
+
+jobs:
+  run-uipath-process:
+    name: Execute UiPath process
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    env:
+      UIPATH_TENANT: ${{ vars.UIPATH_TENANT }}
+      UIPATH_CLIENT_ID: ${{ secrets.UIPATH_CLIENT_ID }}
+      UIPATH_CLIENT_SECRET: ${{ secrets.UIPATH_CLIENT_SECRET }}
+      UIPATH_PROCESS_KEY: ${{ secrets.UIPATH_PROCESS_KEY }}
+      UIPATH_FOLDER_KEY: ${{ secrets.UIPATH_FOLDER_KEY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install UiPath CLI
+        run: npm install -g @uipath/cli@1.0.0
+
+      - name: Install Orchestrator CLI tool
+        run: uip tools install @uipath/orchestrator-tool
+
+      - name: Validate configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          for name in \
+            UIPATH_TENANT \
+            UIPATH_CLIENT_ID \
+            UIPATH_CLIENT_SECRET \
+            UIPATH_PROCESS_KEY \
+            UIPATH_FOLDER_KEY
+          do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::$name is missing"
+              exit 1
+            fi
+          done
+
+      - name: Authenticate with UiPath Automation Cloud
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          uip login \
+            --client-id "$UIPATH_CLIENT_ID" \
+            --client-secret "$UIPATH_CLIENT_SECRET" \
+            --tenant "$UIPATH_TENANT" \
+            --scope "OR.Folders OR.Execution OR.Jobs"
+
+      - name: Verify authentication
+        run: uip login status --output table
+
+      - name: Execute process and wait for completion
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "Starting UiPath Orchestrator process..."
+
+          uip or jobs start "$UIPATH_PROCESS_KEY" \
+            --folder-key "$UIPATH_FOLDER_KEY" \
+            --wait-for-completion \
+            --timeout 1800 \
+            --poll-interval 10
+
+          echo "UiPath process completed successfully."
