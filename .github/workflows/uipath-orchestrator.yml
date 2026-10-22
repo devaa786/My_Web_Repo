@@ -1,3 +1,4 @@
+```yaml
 name: Run UiPath Orchestrator Process
 
 on:
@@ -25,7 +26,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -41,54 +42,44 @@ jobs:
       - name: Validate configuration
         shell: bash
         run: |
-          test -n "$UIPATH_TENANT" || {
-            echo "UIPATH_TENANT is missing"
-            exit 1
-          }
-          test -n "$UIPATH_CLIENT_ID" || {
-            echo "UIPATH_CLIENT_ID is missing"
-            exit 1
-          }
-          test -n "$UIPATH_CLIENT_SECRET" || {
-            echo "UIPATH_CLIENT_SECRET is missing"
-            exit 1
-          }
-          test -n "$UIPATH_PROCESS_KEY" || {
-            echo "UIPATH_PROCESS_KEY is missing"
-            exit 1
-          }
-          test -n "$UIPATH_FOLDER_KEY" || {
-            echo "UIPATH_FOLDER_KEY is missing"
-            exit 1
-          }
+          set -euo pipefail
+
+          for name in \
+            UIPATH_TENANT \
+            UIPATH_CLIENT_ID \
+            UIPATH_CLIENT_SECRET \
+            UIPATH_PROCESS_KEY \
+            UIPATH_FOLDER_KEY
+          do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::$name is missing"
+              exit 1
+            fi
+          done
 
       - name: Authenticate with UiPath Automation Cloud
+        shell: bash
         run: |
+          set -euo pipefail
+
           uip login \
             --client-id "$UIPATH_CLIENT_ID" \
             --client-secret "$UIPATH_CLIENT_SECRET" \
             --tenant "$UIPATH_TENANT" \
             --scope "OR.Folders OR.Execution OR.Jobs"
 
-      # FIX: Bind the folder key header to a custom global profile named 'ProdProfile'
-      - name: Configure Orchestrator Folder Profile
-        run: |
-          uip config set \
-            --profile ProdProfile \
-            --header "X-UIPATH-OrganizationUnitId=$UIPATH_FOLDER_KEY"
-
-      # FIX: Verify authentication against the newly generated folder profile
       - name: Verify authentication
-        run: uip login status --profile ProdProfile --output table
+        run: uip login status --output table
 
-      # FIX: Run the process utilizing the profile setup to enforce folder context
       - name: Execute process and wait for completion
         shell: bash
         run: |
+          set -euo pipefail
+
           echo "Starting UiPath Orchestrator process..."
 
           uip or jobs start "$UIPATH_PROCESS_KEY" \
-            --profile ProdProfile \
+            --folder-key "$UIPATH_FOLDER_KEY" \
             --wait-for-completion \
             --timeout 1800 \
             --poll-interval 10
