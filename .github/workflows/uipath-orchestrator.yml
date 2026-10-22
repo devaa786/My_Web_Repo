@@ -22,8 +22,6 @@ jobs:
       UIPATH_CLIENT_SECRET: ${{ secrets.UIPATH_CLIENT_SECRET }}
       UIPATH_PROCESS_KEY: ${{ secrets.UIPATH_PROCESS_KEY }}
       UIPATH_FOLDER_KEY: ${{ secrets.UIPATH_FOLDER_KEY }}
-      # Enables the CLI to natively authenticate using the env variables above
-      UIPATH_CLI_ENABLE_ENV_AUTH: "true" 
 
     steps:
       - name: Checkout repository
